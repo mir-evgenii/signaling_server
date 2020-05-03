@@ -22,12 +22,12 @@ class MessageController extends Controller
 
         $request = Yii::$app->request;
 
-        Yii::info($request, 'Send-Msg Req');
+        Yii::info($request, __METHOD__);
 
         $model->content = $request->get('content');
         $model->recipient = $request->get('recipient');
         $model->sender = $request->get('sender');
-        $model->datetime = $request->get('datetime');
+        $model->datetime = $request->get('date');
         $model->sign = $request->get('sign');
 
         $response = Yii::$app->response;
@@ -47,7 +47,7 @@ class MessageController extends Controller
             $response->data = ['message' => 'Error, not save message.'];
         }
 
-        Yii::info($response, 'Send-Msg Res');
+        Yii::info($response, __METHOD__);
 
         return $response;
     }

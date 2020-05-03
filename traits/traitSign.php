@@ -3,7 +3,7 @@ namespace app\traits;
 
 trait traitSign
 {
-    private function signMessage($message)
+    public function signMessage($message)
     {
         /*
          * Подпись сообщения
@@ -25,7 +25,7 @@ trait traitSign
         return $hex;
     }
 
-    private function verifySign($message, $sign, $publicKey)
+    public function verifySign($message, $sign, $publicKey)
     {
         /*
          * Верификация (проверка) подписи
@@ -39,14 +39,23 @@ trait traitSign
 
         $binarySign = pack("H*", $sign);
 
-        $test = openssl_verify($message, $binarySign, $publicKey);
+        $publicKey = $this->restorePublicKey($publicKey);
 
-        if ($test == 1) {
+        $test = openssl_verify(md5($message, true), $binarySign, $publicKey, $signature_alg = OPENSSL_ALGO_SHA256);
+
+        $a = $test;
+
+        if ($test === 1) {
             return true;
-        } elseif ($test == 0) {
+        } elseif ($test === 0) {
             return false;
         } else {
             return false;
         }
+    }
+
+    private function restorePublicKey($publicKey)
+    {
+        return "-----BEGIN PUBLIC KEY-----\n".chunk_split($publicKey, 64, "\n")."-----END PUBLIC KEY-----";
     }
 }
