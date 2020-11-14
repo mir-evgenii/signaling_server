@@ -38,6 +38,8 @@ class HelloController extends Controller
         // весь код после pcntl_fork() будет выполняться двумя процессами: родительским и дочерним
         $child_pid = pcntl_fork();
         if ($child_pid) {
+            echo('Fork:');
+            echo($child_pid);
             // Выходим из родительского, привязанного к консоли, процесса
             exit();
         }

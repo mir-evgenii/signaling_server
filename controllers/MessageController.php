@@ -32,6 +32,7 @@ class MessageController extends Controller
 
         $response = Yii::$app->response;
         $response->format = \yii\web\Response::FORMAT_JSON;
+        $response->headers->set('Access-Control-Allow-Origin', '*');
 
         //$message = $model->datetime.' '.$model->content;
         $message = $model->content;
@@ -69,6 +70,7 @@ class MessageController extends Controller
 
         $response = Yii::$app->response;
         $response->format = \yii\web\Response::FORMAT_JSON;
+        $response->headers->set('Access-Control-Allow-Origin', '*');
 
         $response->data = ['messages-for-client' => $model];
 

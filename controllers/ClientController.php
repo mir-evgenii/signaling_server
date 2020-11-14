@@ -24,6 +24,7 @@ class ClientController extends Controller
 
         $response = Yii::$app->response;
         $response->format = \yii\web\Response::FORMAT_JSON;
+        $response->headers->set('Access-Control-Allow-Origin', '*');
 
         if ($model->save()) {
             $response->data = ['message' => 'isOnline'];
@@ -57,6 +58,7 @@ class ClientController extends Controller
 
         $response = Yii::$app->response;
         $response->format = \yii\web\Response::FORMAT_JSON;
+        $response->headers->set('Access-Control-Allow-Origin', '*');
 
         $response->data = ['online_users' => $arrOnlineKey];
 
@@ -82,6 +84,7 @@ class ClientController extends Controller
 
         $response = Yii::$app->response;
         $response->format = \yii\web\Response::FORMAT_JSON;
+        $response->headers->set('Access-Control-Allow-Origin', '*');
 
         $response->data = ['message' => 'isOffline'];
 
