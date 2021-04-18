@@ -35,32 +35,23 @@
     <div id="app">
     <b-container class="bv-example-row">
 
-        <!-- Modal menu -->
-        <b-modal id="modal-menu" centered title="Menu" hide-footer>
+        <!-- Modal mobile menu -->
+        <b-modal id="modal-menu" centered title="Меню" hide-footer>
         <b-container class="bv-example-row">
-            <b-row class="mt-2 mb-2">
-            <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
-            <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
-            <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
-            <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
-            </b-row>
-            <b-row class="mb-2">
-            <frend-list 
-                v-for="item in frendsList" 
-                v-bind:frend="item"
-                v-bind:key="item.id">
-            </frend-list>
-            </b-row>
+            <b-button v-b-modal.modal-add-frend block>Добавить контакт</b-button>
+            <b-button v-if="frend" v-b-modal.modal-edit-frend block>Редактировать контакт</b-button>
+            <b-button v-if="frend" v-b-modal.modal-del-frend block>Удалить контакт</b-button>
+            <b-button v-if="frend" v-b-modal.modal-del-msgs block>Удалить диалог</b-button>
         </b-container>
         </b-modal>
         
-        <b-modal id="modal-add-frend" centered title="Add frend" @show="resetModal" @hidden="resetModal" @ok="handleOk">
+        <b-modal id="modal-add-frend" centered ok-only ok-title="Сохранить" ok-variant="success" title="Добавление контакта" @show="resetModal" @hidden="resetModal" @ok="handleOk">
             <form ref="form" @submit.stop.prevent="handleSubmit">
                 <b-form-group
                 :state="nameState"
-                label="Name"
+                label="Имя"
                 label-for="name-input"
-                invalid-feedback="Name is required"
+                invalid-feedback="Имя обязательно"
                 >
                 <b-form-input
                     id="name-input"
@@ -72,9 +63,9 @@
                 </b-form-group>
                 <b-form-group
                 :state="keyState"
-                label="Key"
+                label="Ключ"
                 label-for="key-input"
-                invalid-feedback="Key is required"
+                invalid-feedback="Ключ обязателен"
                 >
                 <b-form-input
                     id="key-input"
@@ -86,14 +77,13 @@
             </form>
         </b-modal>
 
-        <b-modal id="modal-edit-frend" centered ok-title="Edit" ok-variant="success" title="Edit frend" @show="resetModal" @hidden="resetModal" @ok="handleEdit">
-            <p>Edit frend {{ frend.name }}</p>
+        <b-modal id="modal-edit-frend" centered ok-only ok-title="Сохранить" ok-variant="success" title="Редактировать контакт" @show="resetModal" @hidden="resetModal" @ok="handleEdit">
             <form ref="form" @submit.stop.prevent="handleSubmit">
                 <b-form-group
                 :state="nameState"
-                label="Name"
+                label="Имя"
                 label-for="name-input"
-                invalid-feedback="Name is required"
+                invalid-feedback="Имя обязательно"
                 >
                 <b-form-input
                     id="name-input"
@@ -101,16 +91,32 @@
                     :state="nameState"
                     required
                 ></b-form-input>
+                <b-form-group
+                :state="keyState"
+                label="Ключ"
+                label-for="key-input"
+                invalid-feedback="Ключ обязателен"
+                >
+                <b-form-input
+                    id="key-input"
+                    v-model="frend.key"
+                    :state="keyState"
+                    required
+                ></b-form-input>
                 </b-form-group>
             </form>
         </b-modal>
 
-        <b-modal id="modal-del-frend" ok-title="Delete" ok-variant="danger" centered title="Delete frend" @ok="handleDel">
-            <p class="my-4">You delete frend {{ frend.name }}!</p>
+        <b-modal id="modal-del-frend" ok-only ok-title="Удалить" ok-variant="danger" centered title="Удаление контакта" @ok="handleDel">
+            <p class="my-4">Удалить контакт {{ frend.name }}?</p>
+        </b-modal>
+
+        <b-modal id="modal-del-msgs" ok-only ok-title="Удалить" ok-variant="danger" centered title="Удаление диалога" @ok="handleDelAllMsg">
+            <p class="my-4">Удалить диалог с {{ frend.name }}?</p>
         </b-modal>
 
         <!-- Modal call -->
-        <b-modal id="modal-call" size="xl" centered title="Call" hide-footer>
+        <b-modal id="modal-call" size="xl" centered title="Звонок" hide-footer>
             <b-row class="mb-2">
                 <b-col cols="5"></b-col>
                 <b-col cols="2"><h1><b-icon-person-circle></b-icon-person-circle></h1></b-col>
@@ -129,7 +135,7 @@
         </b-modal>
 
         <!-- Modal video-call -->
-        <b-modal id="modal-video-call" size="xl" centered title="Video-call" hide-footer>
+        <b-modal id="modal-video-call" size="xl" centered title="Видео звонок" hide-footer>
             <b-row class="mb-2">
                 <b-col cols="5"></b-col>
                 <b-col cols="2"><h1>{{ frend.name }}</h1></b-col>
@@ -151,13 +157,11 @@
             <b-navbar-nav>
                 <b-button-group>
                 <b-button v-if="frend" v-on:click="app.back()"><b-icon-arrow-left></b-icon-arrow-left></b-button>
-                <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
-                <b-button v-if="frend" v-on:click="createOfferSDP('chat')">WebRTC1</b-button>
-                <b-button v-if="frend" v-b-modal.modal-call><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-video-call><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
+                <b-button v-if="!frend" v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-menu><b-icon-list></b-icon-list></b-button>
+                <b-button v-if="frend.status" v-on:click="createOfferSDP('chat')">WebRTC <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button>
+                <b-button v-if="frend.status" v-b-modal.modal-call v-on:click="createOfferSDPMedia('audio')"><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
+                <b-button v-if="frend.status" v-b-modal.modal-video-call v-on:click="createOfferSDPMedia('video')"><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
                 </b-button-group>
             </b-navbar-nav>
         </b-navbar>
@@ -170,10 +174,10 @@
                 <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
-                <b-button v-if="frend" v-on:click="createOfferSDP('chat')">WebRTC1</b-button>
-                <b-button v-if="frend" v-b-modal.modal-call><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-video-call><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-del-msgs><b-icon-trash-fill></b-icon-trash-fill></b-button>
+                <b-button v-if="frend.status" v-on:click="createOfferSDP('chat')">WebRTC <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button>
+                <b-button v-if="frend.status" v-b-modal.modal-call v-on:click="createOfferSDPMedia('audio')"><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
+                <b-button v-if="frend.status" v-b-modal.modal-video-call v-on:click="createOfferSDPMedia('video')"><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
                 </b-button-group>
             </b-navbar-nav>
         </b-navbar>
@@ -227,16 +231,16 @@
         <div v-else>
             <div>
                 <b-jumbotron bg-variant="light" text-variant="dark" border-variant="dark">
-                  <template v-slot:header>Web-RTC messenger</template>
+                  <template v-slot:header>Web-RTC мессенджер</template>
               
                   <template v-slot:lead>
-                    This messenger work on Web-RTC technology.
+                    Этот мессенджер работает на технологии Web-RTC.
                   </template>
               
                   <hr class="my-4">
               
                   <p>
-                    <b-link href="https://webrtc.org/">More about Web-RTC</b-link>
+                    <b-link href="https://webrtc.org/">Больше информации о Web-RTC</b-link>
                   </p>
                 </b-jumbotron>
               </div>              
@@ -298,7 +302,6 @@
  
 
 </body>
-
     <!-- JS -->
 	<!-- api -->
     <script>let api_command = {
@@ -317,7 +320,7 @@ let my_sender_data = {
     "key": "678"
 }
 
-let server_host = 'http://localhost:8080';
+let server_host = 'http://192.168.0.102:8080';
 let public_key = '678';
 let secret_key = '';
 
@@ -372,7 +375,7 @@ async function getMessages() {
     let url = server_host + api_command.get_messages + "?key=" + public_key;
     let response = await sendRequest(url);
     let json = JSON.parse(response);
-    // console.log(json['messages-for-client']); // TODO заменить - на _ на сервере
+    //console.log(json['messages-for-client']); // TODO заменить - на _ на сервере
     if (json['messages-for-client']) {
         return json['messages-for-client'];
     }
@@ -402,9 +405,26 @@ function getFormatedDateTime() {
 
     return formated_date;
 }
+
+// при закрытии вкладки с приложением выходим в офлайн
+window.addEventListener('beforeunload', async function (e) {
+    await getOffline();
+  }, false);
+
 </script>
+
+
+
 	<!-- webrtc -->
-    <script>// offer/join
+    <script>// offer
+// createOfferSDP(type); // type = 'chat'/'video'/'audio'
+// start(answerSDP);
+
+// join
+// createAnswerSDP(offerSDP);
+
+
+// offer/join
 var server = { urls: "stun:stun.l.google.com:19302"};
 var sdpConstraints = { optional: [{RtpDataChannels: true}]  };
 var pc = new RTCPeerConnection(null);
@@ -415,22 +435,32 @@ var sdp_msg; // SDP датаграмма
 //---------media--------------
 
 // type = 'video'/'audio'
-async function mediaWebRTC(type){
+async function mediaWebRTC(type, offerSDP = false, Reject = false){
+  console.log('1 mediaWebRTC');
   let constraints = {audio: true, video: true};
   if (type == 'audio') constraints = {audio: true, video: false};
 
   pc.ontrack = event => {
+    console.log('2 mediaWebRTC pc.ontrack');
     const stream = event.streams[0];
     if (!remoteVideo.srcObject || remoteVideo.srcObject.id !== stream.id) {
       remoteVideo.srcObject = stream;
     }
   };
+  
 
   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-    // Display your local video in #localVideo element
+    console.log('3 mediaWebRTC getUserMedia');
+    // Display your local video in #localVideo element 
     localVideo.srcObject = stream;
     // Add your stream to be sent to the conneting peer
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
+    console.log('3 mediaWebRTC getUserMedia end ...');
+    if (Reject) {
+      createAnswerSDPRejected(type, offerSDP);
+    } else {
+      createOfferSDP(type);
+    }
   });
 }
 
@@ -450,19 +480,40 @@ function joinWebRTC() {
       if (e.candidate) return;
       sdp_msg = JSON.stringify(pc.localDescription);
       console.log(sdp_msg);
-      sendMessage(sdp_msg, my_sender_data.key, app.frend.key);
+
+      msg = JSON.stringify({
+        type: '',
+        sdp: sdp_msg
+      });
+
+      sendMessage(msg, my_sender_data.key, app.frend.key);
     }
     // join 3 изменение статуса 
-    pc.oniceconnectionstatechange = function(e) {
+    pc.oniceconnectionstatechange = async function(e) {
       state = pc.iceConnectionState;
       console.log(state);
+      if (state == 'connected') {
+        app.frend['webrtc'] = 1;
+        await app.editFrend(app.frend);
+      } else {
+        app.frend['webrtc'] = 0;
+        await app.editFrend(app.frend);
+      }
     }
 }
 
 // join 5
 // type = 'chat'/'video'/'audio'
 async function createAnswerSDP(type, offerSDP) {
-  if (type == 'video' || type == 'audio') await mediaWebRTC(type);
+  await app.showWebrtcConnection(type, offerSDP); // main
+}
+
+function createAnswerSDPRejectedMedia(type, offerSDP) {
+  if (type == 'video' || type == 'audio') mediaWebRTC(type, offerSDP, true);
+}
+
+async function createAnswerSDPRejected(type, offerSDP) {
+  //if (type == 'video' || type == 'audio') await mediaWebRTC(type);
   joinWebRTC();
   var offerDesc = new RTCSessionDescription(offerSDP);
   pc.setRemoteDescription(offerDesc);
@@ -474,29 +525,54 @@ async function createAnswerSDP(type, offerSDP) {
 
 //----------offer--------------
 
-function offerWebRTC() {
+function offerWebRTC(type) {
+  console.log('5 offerWebRTC');
   // offer 1 изменение статуса 
-  pc.oniceconnectionstatechange = function(e) {
+  pc.oniceconnectionstatechange = async function(e) {
+    console.log('6 pc.oniceconnectionstatechange');
     state = pc.iceConnectionState;
     console.log(state);
+    if (state == 'connected') {
+      app.frend['webrtc'] = 1;
+      await app.editFrend(app.frend);
+    } else {
+      app.frend['webrtc'] = 0;
+      await app.editFrend(app.frend);
+    }
   }
   // offer 2 sdp датаграмма
   pc.onicecandidate = function(e) {
-    if (e.candidate) return;
+    console.log('7 pc.onicecandidate');
+    if (e.candidate) {
+      return;
+    } 
     sdp_msg = JSON.stringify(pc.localDescription);
     console.log(sdp_msg);
+
+    msg = JSON.stringify({
+      type: type,
+      sdp: sdp_msg
+    });
+
+    console.log(msg);
     
-    sendMessage(sdp_msg, my_sender_data.key, app.frend.key); // api
+    sendMessage(msg, my_sender_data.key, app.frend.key); // api
   }
 }
 
 // offer 3
 // type = 'chat'/'video'/'audio'
+function createOfferSDPMedia(type) {
+  if (type == 'video' || type == 'audio') mediaWebRTC(type);
+}
+
 async function createOfferSDP(type) {
-  if (type == 'video' || type == 'audio') await mediaWebRTC(type);
-  offerWebRTC();
+  //if (type == 'video' || type == 'audio') await mediaWebRTC(type);
+  console.log('4 createOfferSDP cont....');
+  offerWebRTC(type);
   if (type == 'chat') dc = pc.createDataChannel("chat");
   pc.createOffer().then(function(e) {
+    console.log('8 createOffer');
     pc.setLocalDescription(e)
   });
   if (type == 'chat') {
@@ -519,12 +595,10 @@ function sendMsgWebRtc (msg) {
   dc.send(msg);
 }
 
-
-
-
-
-
 </script>
+
+
+
 	<!-- DB -->
     <script>// Функции работы с БД
 
@@ -535,7 +609,6 @@ async function addFrendToDb(db, frend) {
       resolve();
     };
     let store = trans.objectStore('frends');
-    //store.add(frend);
     store.put(frend);
   });
 }
@@ -648,7 +721,7 @@ const MY_NAME = 'I am';
 
 Vue.component('frend-list', {
     props: ['frend'],
-    template: '<b-button v-on:click="app.getMsgsFrom(frend)" block>{{ frend.name }}</b-button>'
+    template: '<b-button v-if="frend.status" v-on:click="app.getMsgsFrom(frend)" block>{{ frend.name }} <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button><b-button v-else v-on:click="app.getMsgsFrom(frend)" variant="outline-secondary" block>{{ frend.name }}</b-button>'
 })
 
 Vue.component('frend-list-dropdown', {
@@ -693,7 +766,9 @@ var app = new Vue({
       frendListVisible: true,
       widthMsgList: 9,
       isMobile:false,
-      updateInterval:5000 // частота обновления сообщений 5 сек
+      updateInterval:5000, // частота обновления сообщений 5 сек
+      boxWebrtcConnection:null, // разрешение от пользователя на соединение по webrtc
+      connectedFrendKey:null // ключ пользователя который подключается по webrtc
     },
     async created() {
         this.db = await getDb();
@@ -703,7 +778,10 @@ var app = new Vue({
         this.brouser = false;
         this.detectDevice();
 
-        if (getOnline()) await this.updateMsgs(); // обновление сообщений // getOnline - api
+        if (getOnline()) { // обновление сообщений // getOnline - api
+          await this.updateMsgs();
+          await this.updateOnlineFrends();
+        } 
     },
     methods: {
 
@@ -747,6 +825,7 @@ var app = new Vue({
           return
         }
         this.addFrend(this.name, this.key);
+        this.key = '';
         this.$nextTick(() => {
           this.$bvModal.hide('modal-add-frend')
         })
@@ -768,27 +847,96 @@ var app = new Vue({
       // --------------- del all msg -------------------
 
       handleDelAllMsg() {
-        
+        if (this.msgs.length > 0) {
+          for (let i = 0; i < this.msgs.length; i++) {
+            this.deleteMsg(this.msgs[i].id);
+          }
+        }
       },
 
       // --------------- Metods ------------------------
 
-      updateMsgs: async function () {
+        tested: function() {
+          this.$bvModal.show('modal-video-call');
+        },
+
+      showWebrtcConnection: async function (type, offerSDP) {
+        let type_ru = 'Чат';
+        if (type == 'video') type_ru = 'Видео-звонок';
+        if (type == 'audio') type_ru = 'Звонок';
+        let frendInDB = false;
+        for (var i=0; i < this.frendsList.length; i++) {
+          if (this.frendsList[i]['key'] == this.connectedFrendKey) {
+            this.frend = this.frendsList[i];
+            frendInDB = true;
+          }
+        }
+        if (!frendInDB) return false;
+        this.$bvModal.msgBoxConfirm('Контакт ' + this.frend.name + ' сделал запрос на соедиенение по WebRTC.', {
+          title: type_ru,
+          buttonSize: 'lg',
+          okVariant: 'success',
+          okTitle: 'Соединиться',
+          cancelVariant: 'danger',
+          cancelTitle: 'Отклонить',
+          footerClass: 'p-2',
+          hideHeaderClose: false,
+          centered: true
+        })
+          .then(value => {
+            if (type == 'video') {
+              createAnswerSDPRejectedMedia(type, offerSDP);
+              this.$bvModal.show('modal-video-call');
+            }
+            if (type == 'audio') {
+              createAnswerSDPRejectedMedia(type, offerSDP);
+              this.$bvModal.show('modal-call');
+            }
+            if (type == 'chat') createAnswerSDPRejected(type, offerSDP);
+            return value;
+          })
+          .catch(err => {
+            console.log('Error! WebRTC connect rejected. (showWebrtcConnection)');
+          })
+      },
+
+        updateOnlineFrends: async function () {
+          let frends = await getFrendsFromDb(this.db);
+          let keys = [];
+          for (let i = 0; i < frends.length; i++) {
+            keys.push(frends[i]['key']);
+          }
+          let onlineFrends = await getOnlineFrends(keys.join(';'));
+          for (let i = 0; i < frends.length; i++) {
+            if (onlineFrends.indexOf(frends[i]['key']) > -1) {
+              frends[i]['status'] = 1; // онлайн
+              await this.editFrend(frends[i]);
+            } else {
+              frends[i]['status'] = 0; // офлайн
+              await this.editFrend(frends[i]);
+            }
+          }
+          setTimeout(this.updateOnlineFrends, this.updateInterval);
+        },
+
+        updateMsgs: async function () {
           let msgs = await getMessages(); // api
-          // console.log('123');
           if (msgs.length > 0) {
-            msgs = JSON.parse(msgs[0]['content'])
             console.log(msgs);
-            if (msgs['type'] == 'offer') createAnswerSDP('chat', msgs);
-            if (msgs['type'] == 'answer') start(msgs);
+            let msg = JSON.parse(msgs[0]['content']);
+            this.connectedFrendKey = JSON.parse(msgs[0]['sender']);
+            console.log(msg);
+            let type = msg['type'];
+            let sdp = JSON.parse(msg['sdp']);
+            if (sdp['type'] == 'offer') createAnswerSDP(type, sdp);
+            if (sdp['type'] == 'answer') start(sdp);
           }
           setTimeout(this.updateMsgs, this.updateInterval);
         },
 
         sendMsg: async function () {
           this.addMsg(this.sendMsgText, 'I am', this.frend.name);
-          // WebRTC
-          sendMsgWebRtc(this.sendMsgText);
+          sendMsgWebRtc(this.sendMsgText); // отправка сообщения по WebRTC
           this.sendMsgText = '';
           this.msgs = await getMsgsFromDb(this.db, this.frend.name);
         },
@@ -799,7 +947,6 @@ var app = new Vue({
 
         back: function() {
           this.frend = false;
-          sayHi();
         },
 
         getMsgsFrom: async function (frend) {            
@@ -858,41 +1005,3 @@ var app = new Vue({
 </script>
 
 </html>
-
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="ru-RU">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-		<title>Web-приложение</title>
-	</head>
-	<body>
-		<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">  
-			<a class="navbar-brand" href="index.php">Web-app</a>
-			<div class="collapse navbar-collapse" id="navbarNav">
-				<ul class="navbar-nav">
-					<li class="nav-item">
-						<a class="nav-link" href="index.php?r=site/create-category">Создать категорию</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="index.php?r=site/create-good">Создать товар</a>
-					</li>	
-				</ul>
-			</div>
-		</nav>
-
-		<div class="container mt-4">
-			<?= $content ?>
-		</div>
-	
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	</body>
-</html> -->

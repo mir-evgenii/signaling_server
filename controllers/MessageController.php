@@ -37,10 +37,6 @@ class MessageController extends Controller
         //$message = $model->datetime.' '.$model->content;
         $message = $model->content;
 
-        if (!$this->verifySign($message, $model->sign, $model->sender)){
-            $response->data = ['message' => 'Error, not verify sign.'];
-            return $response;
-        }
 
         if ($model->save()) {
             $response->data = ['message' => 'send'];
